@@ -27,5 +27,5 @@
          3) Run the command `kubectl apply -f mongodb.yml` to create mongodb PV, PVC, Deployment and Service.
          4) Run the command `kubectl apply -f mediaservice.yml` create the Deployment and the NodePort Service.
          5) Get the minikube ip
-         6) Access the url `http://<minikube>:31000/swagger-ui.html` to see the swagger UI
+         6) Access the url `http://<minikube ip>:31000/swagger-ui.html` to see the swagger UI
          7) You can execute all the API in swagger
