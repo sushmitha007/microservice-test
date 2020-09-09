@@ -1,0 +1,74 @@
+#Define Persistent Volumes object named `mongo-pv`
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo-pv
+  labels:
+    app: local
+spec:
+  storageClassName: standard
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+  persistentVolumeReclaimPolicy: Retain  # Retain the PersistentVolume even after PersistentVolumeClaim is deleted. The volume is considered “released”. But it is not yet available for another claim becaus# Retain the PersistentVolume even after PersistentVolumeClaim is deleted. The volume is considered “released”. But it is not yet available for another claim because the previous claimant’s data remains on the volume.e the previous claimant’s data remains on the volume.
+---
+#  Define a Persistent Volume Claim named `mongo-pvc` that can be used by a Pod to gain access to the Persistent Volumes
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 16Mi
+  accessModes:
+    - ReadWriteOnce
+---
+#Define a deployment named `mongodb` by using the latest mongo image from Docker Hub
+#and the container port should be 27017.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  labels:
+    app: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      volumes:
+        - name: data-db
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+      containers:
+        - name: mongodb
+          image: mongo
+          volumeMounts:
+            - name: data-db
+              mountPath: /data/db
+          ports:
+            - containerPort: 27017
+---
+#Define a service named `mongodb` of type ClusterIP and use the above created deployment as selector
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  labels:
+    app: mongodb
+spec:
+  ports:
+    - port: 27017
+      protocol: TCP
+  selector:
+    app: mongodb

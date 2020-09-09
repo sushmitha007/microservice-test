@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+
+  reviewservice:
+    image: sushmitha007/media-service:2.0
+    restart: always
+    hostname: localhost
+    network_mode: "host"
+    ports:
+      - 8090:8090
+
+  mongodb:
+    image: mongo
+    restart: always
+    hostname: localhost
+    network_mode: host
+    container_name: mongo-nokia
+    volumes:
+      - ./tarfiledata:/data/db
+    ports:
+      - 27017:27017

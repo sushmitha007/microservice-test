@@ -1,0 +1,41 @@
+#Define a deployment named `mediaservice-deployment` by using the image pushed to Docker Hub
+#and the container port should be 8090.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mediaservice-deployment
+  labels:
+    k8.stackroute: mediaservice-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      k8.stackroute: mediaservice-deployment
+  template:
+    metadata:
+      labels:
+        k8.stackroute: mediaservice-deployment
+    spec:
+      containers:
+        - name: media-service
+          image: sushmitha007/media-service:4.0
+          ports:
+            - containerPort: 8090
+---
+#Define a service named `mediaservice-svc` of type NodePort and use the above created deployment as selector
+apiVersion: v1
+kind: Service
+metadata:
+  name: mediaservice-svc
+  labels:
+    k8.stackroute: mediaservice-svc
+spec:
+  type: NodePort
+  selector:
+    k8.stackroute: mediaservice-deployment
+  ports:
+    - nodePort: 31000
+      port: 8090
+      targetPort: 8090
+
+
