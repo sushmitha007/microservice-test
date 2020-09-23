@@ -2,7 +2,7 @@ version: '2'
 
 services:
 
-  reviewservice:
+  mediaservice:
     image: sushmitha007/media-service:2.0
     restart: always
     hostname: localhost
